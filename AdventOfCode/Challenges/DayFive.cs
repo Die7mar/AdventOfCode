@@ -25,18 +25,18 @@ namespace AdventOfCode.Challenges
 
             for (int i = 0; i < CountStacks; i++)
             {
-                resultString += readed.stacks[i,0];
+                resultString += readed.stacks[i][0];
             }
 
             Console.WriteLine("Result: " + resultString);
         }
 
 
-        private (char[,] stacks, int startOnGoing) Read()
+        private (List<List<char>> stacks, int startOnGoing) Read()
         {
             var content = File.ReadAllLines("Inputs\\day5.txt");
-          
-            char[,] stacks = new char[CountStacks, 100];
+
+            List<List<char>> stacks = new List<List<char>>();
             int end = 0;
 
 
@@ -44,65 +44,43 @@ namespace AdventOfCode.Challenges
 
             for (int s = 0; s < CountStacks; s++)
             {
-                int datPos = (s * 4) + 1;
-                int pos = 0;
+                stacks.Add(new List<char>());
 
-                for (int i = end; i >= 0; i--)
+                int datPos = (s * 4) + 1;
+                for (int i = 0; i <= end; i++)
                 {
                     if (content[i].Length >= datPos && char.IsLetter(content[i][datPos]))
                     {
-                        stacks[s, pos] = content[i][datPos];
+                        stacks[s].Add(content[i][datPos]);
                     }
-                    pos++;
                 }
 
             }
 
+            foreach (var item in stacks) { item.Reverse(); }
+
             return (stacks, end + 3);
         }
 
-        private void Move(ref char[,] stacks, string cmd)
+        private void Move(ref List<List<char>> stacks, string cmd)
         {
             string[] cmdParts = cmd.Split(' ');
             int count = Convert.ToInt32(cmdParts[1]);
             int sourceStack = Convert.ToInt32(cmdParts[3]) - 1;
             int targetStack = Convert.ToInt32(cmdParts[5]) - 1;
 
-            var sourceStackCount = GetCountOfStack(stacks, sourceStack);
-            var targetStackCount = GetCountOfStack(stacks, targetStack);
 
             for (int i = 0; i < count; i++)
             {
-                var value = stacks[sourceStack, sourceStackCount - 1];
-                stacks[sourceStack, sourceStackCount - 1] = '\0';
-                stacks[targetStack, targetStackCount] = value;
-
-                sourceStackCount--;
-                targetStackCount++;
+                var value = stacks[sourceStack][stacks[sourceStack].Count - 1];
+                stacks[sourceStack].RemoveAt(stacks[sourceStack].Count - 1);
+                stacks[targetStack].Add(value);
             }
 
 
         }
 
-        private int GetCountOfStack(char[,] stacks, int stack)
-        {
-            var output = 0;
-
-            for (int i = 0; i < stacks.Length; i++)
-            {
-                if (!char.IsLetter(stacks[stack,i]))
-                {
-                    break;
-                } 
-                output++;
-            }
-
-           
-
-            return output;
-        }
-
-
+ 
         public void Part2()
         {
             //throw new NotImplementedException();
