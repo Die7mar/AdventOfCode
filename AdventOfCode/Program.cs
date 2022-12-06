@@ -32,6 +32,9 @@ while (true)
         case 5:
             challenge = new DayFive();
             break;
+        case 6:
+            challenge = new DaySix();
+            break;
         default:
             Console.WriteLine("No DATA");
             continue;
